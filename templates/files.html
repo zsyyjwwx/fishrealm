@@ -1,0 +1,533 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>files</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link href="../static/css/about.css" rel="stylesheet" type="text/css" media="all" />
+	<link rel="icon" href="./static/favicon/favicon.ico" type ="image/x-icon">
+	<link rel="stylesheet" href="../static/css/common.css">
+	<link rel="stylesheet" href="../static/css/blog_edit.css">
+		<!---//End-login-script--->
+		<!-----768px-menu----->
+	<link type="text/css" rel="stylesheet" href="../static/css/jquery.mmenu.all.css" />
+		<!-----//768px-menu----->
+
+  <link href="../static/layui/css/layui.css" rel="stylesheet">
+    <script src="/static/layui/layui.js"></script>
+<style>
+/* From www.lingdaima.com */
+.card {
+ width: 190px;
+ height: 254px;
+ border-radius: 10px;
+ background: #f1f5f3;
+ box-shadow: 1px 5px 60px 0px #4646466b;
+}
+
+.card .picture,.card .name,.card .jobtitle,.card .buttons {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+
+.card .picture {
+ border: 2px solid #4646466b;
+ height: 100px;
+ width: 100px;
+ border-radius: 100%;
+ margin: auto;
+ margin-top: 15px;
+ cursor: pointer;
+ transition: all .3s;
+}
+
+.card .picture p {
+ font-size: .8em;
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.buttons > div {
+ padding: .5em;
+}
+
+button {
+ padding: .5em;
+ outline: none;
+ background: transparent;
+ border: 1px solid #0f0f0f6b;
+ border-radius: .4em;
+ font-family: Verdana, Geneva, Tahoma, sans-serif;
+ transition: all .3s;
+ font-size: .7em;
+}
+
+.card .picture:hover,button:hover {
+ background: #252525;
+ color: #f1f5f3;
+}
+
+.card .name p {
+ margin-top: 8%;
+ margin-bottom: 5%;
+ font-size: 1em;
+}
+
+.card .jobtitle p {
+ margin-bottom: 10%;
+ font-size: .54em;
+ text-transform: uppercase;
+ letter-spacing: .5em;
+}
+  .footer{
+        height: 150px;
+        text-align: center;
+        font-size: 16px;
+        padding: 0px 100px;
+        position: absolute;
+        bottom: 0; /* 4. 设置页脚position为absolute之后，再将其bottom值设为0，即可使其处于页面的底部 */
+        width: 100%;
+    }
+    .footer{
+      cursor: pointer;
+    }
+    .copyright{
+      font-size: 12px;
+    }
+    .info{
+      font-size: 14px;
+      color: white;
+      line-height: 25px;
+    }
+    .footer .scroll{
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border:2px solid #eaeaea;
+      /* background-color: rgba(216, 16, 109,0.6); */
+      position: absolute;
+      left: 5%;
+      top: -25px;
+      z-index: 10;
+      animation: scrollA infinite 20s linear alternate;
+    }
+    @keyframes scrollA {
+      0% {left: 5%;transform: rotate(180deg);};
+      10% {left: 5%;transform: rotate(270deg);}
+      20% {left: 5%;transform: rotate(450deg);}
+      25% {left: 10%;transform: rotate(540deg);}
+      30% {left: 20%;transform: rotate(720deg);}
+      35% {left: 30%;transform: rotate(900deg);}
+      40% {left: 40%;transform: rotate(1080deg);}
+      45% {left: 50%;transform: rotate(1260deg);}
+      50% {left: 60%;transform: rotate(1440deg);}
+      55% {left: 70%;transform: rotate(1620deg);}
+      60% {left: 80%;transform: rotate(1800deg);}
+      80% {left: 90%;transform: rotate(2610deg);}
+      90% {left: 90%;transform: rotate(2340deg);}
+      100% {left: 90%;transform: rotate(2520deg);}
+    }
+
+</style>
+</head>
+<body>
+<!-- 导航栏 -->
+    <div class="nav">
+        <a href="/"><img src="../static/image/logo.png" alt=""> </a>
+        <span class="title" style="color:black;">&nbsp;FishRealm</span>
+         <!-- 使用 span 把左右两侧的元素给撑开 -->
+         <span class="spacer"></span>
+         <li><a href="/">首页</a></li>
+         <li class="active"><a href="{{url_for('files')}}" >书架</a></li>
+         <li><a href="{{url_for('forum',page=0)}}" >交流</a></li>
+         <li><a href="{{url_for('edit')}}" >编辑</a></li>
+         <li><a href="{{url_for('blog_list')}}" >管理</a></li>
+         {% if post.islogin %}
+         <li><a href="{{url_for('myweb',user_name=post.id)}}" ><span style="color: crimson;"></span>{{post.id}}</a></li>
+         {% else %}
+         <li><a href="{{url_for('login')}}" ><span style="color: crimson;"></span>登录</a></li>
+         {% endif %}
+    </div>
+<p class="about-title">&emsp; F&emsp; T&emsp; M&emsp; S&emsp; </p>
+
+<table class="layui-hide" id="demo" lay-filter="test"></table>
+
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">下载</a>
+  <a class="layui-btn layui-btn-xs" lay-event="more">编辑<i class="layui-icon layui-icon-down"></i></a>
+</script>
+
+<div class="layui-tab layui-tab-brief" lay-filter="demo">
+  <ul class="layui-tab-title">
+    <li class="layui-this">演示说明</li>
+    <li>上传</li>
+
+  </ul>
+  <div class="layui-tab-content">
+    <div class="layui-tab-item layui-show">
+      <div class="layui-carousel" id="test1">
+        <div carousel-item>
+          <div class="layui-bg-green demo-carousel" style="display: flex;align-items: center;justify-content: center;">
+              <p>欢迎使用FishRealm&emsp;FTMS&emsp;文件传输管理系统</p><br>
+              <p>，请遵守相关法律法规，禁止上传违规违法文件，感谢您的配合。</p>
+          </div>
+      </div>
+    </div>
+    </div>
+    <div class="layui-tab-item">
+      <div class="layui-upload-drag" id="uploadDemo" style="display:flex;align-items:center;justify-content:center;">
+        <i class="layui-icon"></i>
+        <p>点击上传，或将文件拖拽到此处</p>
+        <div class="layui-hide" id="uploadDemoView" style="display:flex;align-items:center;justify-content:center;">
+          <hr>
+          <img src="" alt="上传成功后渲染" style="max-width: 100%">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- GoogleAna-Fixed-Square -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:728px;height:51px"
+     data-ad-client="ca-pub-1707583634195460"
+     data-ad-slot="6404140215"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<script>
+var addlink = function (d) {
+    //这里是拼接三个字符串拼接成一个完整的a标签，中间的字符串是url
+    var html = '<form action="{{url_for('files')}}" method="POST"> <button class="button" style = "min-width:100px;"> '
+    + d.filename + '</button ><input type="text" style="visibility: hidden;height:0px;width:0px;" name="filename" value="'
+     + d.filename + '" >'
+     + '<input type="text" style="visibility: hidden;height:0px;width:0px;" name="filepath" value="'
+      + d.path + '" ></form>'
+
+    //var html = '<a style="color:#1E9FFF" href="' +d.filename+ '" target="_blank" >' +d.filename+ '</a>';
+    return html
+};
+</script>
+<script src="/static/layui/layui.js"></script>
+<script>
+layui.config({
+  version: '1632428048260' //为了更新 js 缓存，可忽略
+});
+
+//加载模块
+layui.use(function(){ //亦可加载特定模块：layui.use(['layer', 'laydate', function(){
+  //得到各种内置组件
+  var layer = layui.layer //弹层
+  ,laypage = layui.laypage //分页
+  ,laydate = layui.laydate //日期
+  ,table = layui.table //表格
+  ,carousel = layui.carousel //轮播
+  ,upload = layui.upload //上传
+  ,element = layui.element //元素操作
+  ,slider = layui.slider //滑块
+  ,dropdown = layui.dropdown //下拉菜单
+
+  //监听Tab切换
+  element.on('tab(demo)', function(data){
+    layer.tips('切换了 '+ data.index +'：'+ this.innerHTML, this, {
+      tips: 1
+    });
+  });
+
+  //执行一个 table 实例
+  table.render({
+    elem: '#demo'
+    ,height: 640
+    ,url: '/file/data' //数据接口
+    ,title: '用户表'
+    ,toolbar: 'default' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+    ,cols: [[ //表头
+      {type: 'checkbox'}
+      ,{type: 'numbers'}
+      ,{field: 'filename', title: '名称', width: 160, templet: addlink}
+      ,{field: 'datasize', title: '大小', width: 160}
+      ,{field: 'cdatetime', title: '创建时间', width: 160}
+      ,{field: 'mdatetime', title: '修改时间', width: 160}
+      ,{field: 'privilege', title: '权限', width: 80}
+      ,{field: 'owner', title: '所属', width: 100}
+      ,{field: 'path', title: '路径', width: 250}
+      ,{fixed: 'right', width: 150, align:'center', toolbar: '#barDemo'}
+    ]]
+  });
+
+  //监听头工具栏事件
+  table.on('toolbar(test)', function(obj){
+    var checkStatus = table.checkStatus(obj.config.id)
+    ,data = checkStatus.data; //获取选中的数据
+    switch(obj.event){
+      case 'add':
+            layer.confirm('是否新建文件夹？', function(index){
+            path = '{{url_for('add_files')}}';
+            parameters = {
+                'add_file':'add_file'
+            };
+            method='POST';
+            const form = document.createElement('form');
+            form.method = method;
+            form.action = path;
+            document.body.appendChild(form);
+
+            for (const key in parameters) {
+                const formField = document.createElement('input');
+                formField.type = 'hidden';
+                formField.name = key;
+                formField.value = parameters[key];
+                form.appendChild(formField);
+            }
+            form.submit();
+            layer.close(index)
+            });
+      break;
+      case 'update':
+        if(data.length === 0){
+          layer.msg('请选择一行');
+        } else if(data.length > 1){
+          layer.msg('只能同时编辑一个');
+        } else {
+          layer.alert('编辑 [id]：'+ checkStatus.data[0].id);
+        }
+      break;
+      case 'delete':
+        if(data.length === 0){
+          layer.msg('请选择一行');
+        } else {
+          layer.msg('删除');
+        }
+      break;
+    };
+  });
+
+  //监听行工具事件
+  table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    var data = obj.data //获得当前行数据
+    ,layEvent = obj.event; //获得 lay-event 对应的值
+    if(layEvent === 'detail'){
+
+
+      layer.msg('查看操作');
+      path = '{{url_for('downfile')}}';
+      parameters = {
+                'filepath':data.path
+                ,'filename':data.filename //获得当前行数据
+                ,'privilege':data.privilege
+                ,'owner':data.owner
+            };
+      method='POST';
+      const form = document.createElement('form');
+      form.method = method;
+      form.action = path;
+      document.body.appendChild(form);
+      for (const key in parameters) {
+                const formField = document.createElement('input');
+                formField.type = 'hidden';
+                formField.name = key;
+                formField.value = parameters[key];
+                form.appendChild(formField);}
+       form.submit();
+
+    } else if(layEvent === 'more'){
+      //下拉菜单
+      dropdown.render({
+        elem: this //触发事件的 DOM 对象
+        ,show: true //外部事件触发即显示
+        ,data: [{
+          title: '重命名'
+          ,id: 'edit'
+        },{
+          title: '解压'
+          ,id: 'unzip'
+        },{
+          title: '运行'
+          ,id: 'run'
+        },{
+          title: '删除'
+          ,id: 'del'
+        }]
+        ,click: function(menudata){
+          if(menudata.id === 'del'){
+            layer.confirm('请确定是否删除: ' + data.filename, function(index){
+            path = '{{url_for('delete_files')}}';
+            parameters = {
+                'filepath':data.path
+                ,'filename':data.filename //获得当前行数据
+                ,'privilege':data.privilege
+                ,'owner':data.owner
+            };
+            method='POST';
+            const form = document.createElement('form');
+            form.method = method;
+            form.action = path;
+            document.body.appendChild(form);
+
+            for (const key in parameters) {
+                const formField = document.createElement('input');
+                formField.type = 'hidden';
+                formField.name = key;
+                formField.value = parameters[key];
+                form.appendChild(formField);
+            }
+            form.submit();
+              //obj.del(); //删除对应行（tr）的DOM结构
+              layer.close(index);
+              //向服务端发送删除指令
+            });
+          } else if(menudata.id === 'unzip'){
+            layer.confirm('是否解到当前文件夹:' + data.filename, function(index){
+            path = '{{url_for('unzip_files')}}';
+            parameters = {
+                'filepath':data.path
+                ,'filename':data.filename //获得当前行数据
+                ,'privilege':data.privilege
+                ,'owner':data.owner
+            };
+            method='POST';
+            const form = document.createElement('form');
+            form.method = method;
+            form.action = path;
+            document.body.appendChild(form);
+
+            for (const key in parameters) {
+                const formField = document.createElement('input');
+                formField.type = 'hidden';
+                formField.name = key;
+                formField.value = parameters[key];
+                form.appendChild(formField);
+            }
+            form.submit();
+              //obj.del(); //删除对应行（tr）的DOM结构
+              layer.close(index);
+              //向服务端发送删除指令
+            });
+          }else if(menudata.id === 'run'){
+            layer.confirm('请确认是否将文件 ' + data.filename + ' 生成为个人主页(可通过用户头像访问)<br>(注意需要为HTML文件，否则无效!)', function(index){
+            path = '{{url_for('set_myweb')}}';
+            parameters = {
+                'filepath':data.path
+                ,'filename':data.filename //获得当前行数据
+                ,'privilege':data.privilege
+                ,'owner':data.owner
+            };
+            method='POST';
+            const form = document.createElement('form');
+            form.method = method;
+            form.action = path;
+            document.body.appendChild(form);
+
+            for (const key in parameters) {
+                const formField = document.createElement('input');
+                formField.type = 'hidden';
+                formField.name = key;
+                formField.value = parameters[key];
+                form.appendChild(formField);
+            }
+            form.submit();
+              //obj.del(); //删除对应行（tr）的DOM结构
+              layer.close(index);
+              //向服务端发送删除指令
+            });
+          }
+           else if(menudata.id === 'edit'){
+            layer.prompt({title: '重命名'}, function(value, index, elem){
+            if(value === '') return elem.focus();
+
+            path = '{{url_for('reset_filename')}}';
+            parameters = {
+                'filepath':data.path
+                ,'filename':data.filename //获得当前行数据
+                ,'new_filename':value
+                ,'privilege':data.privilege
+                ,'owner':data.owner
+            };
+            method='POST';
+            const form = document.createElement('form');
+            form.method = method;
+            form.action = path;
+            document.body.appendChild(form);
+
+            for (const key in parameters) {
+                const formField = document.createElement('input');
+                formField.type = 'hidden';
+                formField.name = key;
+                formField.value = parameters[key];
+                form.appendChild(formField);
+            }
+            form.submit();
+            layer.close(index);
+
+          });
+        }}
+        ,align: 'right' //右对齐弹出（v2.6.8 新增）
+        ,style: 'box-shadow: 1px 1px 10px rgb(0 0 0 / 12%);' //设置额外样式
+      })
+    }
+  });
+
+  //执行一个轮播实例
+  carousel.render({
+    elem: '#test1'
+    ,width: '100%' //设置容器宽度
+    ,height: 200
+    ,arrow: 'none' //不显示箭头
+    ,anim: 'fade' //切换动画方式
+  });
+
+
+  //上传
+  upload.render({
+    elem: '#uploadDemo'
+    ,url: '{{url_for('uploadfiles')}}' //此处配置你自己的上传接口即可
+    ,accept: 'file' // 普通文件
+    ,done: function(res){
+      if (res['flag']){
+      layer.msg('上传成功,请重新进入该文件夹查看!');
+      layui.$('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.files.file);
+      console.log(res)
+      }
+      else{
+      layer.msg('上传失败!');
+      }
+    }
+    ,before: function(){
+      layer.msg('上传中', {icon: 16, time: 0});
+    }
+  });
+
+  //底部信息
+  var footerTpl = lay('#footer')[0].innerHTML;
+  lay('#footer').html(layui.laytpl(footerTpl).render({}))
+  .removeClass('layui-hide');
+});
+</script>
+
+
+<div class='footer'>
+      <span class="scroll"></span>
+      <!-- <span id="star-five" class="scroll"></span> -->
+      <el-divider></el-divider>
+      <span></span>
+      <el-divider direction="vertical"></el-divider>
+      <span @click="drawer = true"></span>
+      <br/>
+      <br/>
+      	    <a class="banquan" style="color:white;">Copyright @ fishrealm
+	    </a>
+        <img style="display:inline-block;height:auto;max-width:15px;padding-top:2px;" src="../static/image/备案图标.png">
+        <a class="banquan" style=" color:white"
+        href="http://beian.miit.gov.cn/"
+        target="_blank">皖ICP备2023013279号
+	    </a>
+	<div style="width:300px;margin:0 auto; padding:20px 0;">
+		 		<a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=34122202000369" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="../static/image/备案图标.png" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">皖公网安备 34122202000369号</p></a>
+</div>
+						</div>
+
+</body>
+</html>

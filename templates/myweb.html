@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>{{post.id}}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link href="../static/css/about.css" rel="stylesheet" type="text/css" media="all" />
+	<link rel="icon" href="./static/favicon/favicon.ico" type ="image/x-icon">
+	<link rel="stylesheet" href="../static/css/common.css">
+	<link rel="stylesheet" href="../static/css/blog_edit.css">
+		<!---//End-login-script--->
+		<!-----768px-menu----->
+	<link type="text/css" rel="stylesheet" href="../static/css/jquery.mmenu.all.css" />
+		<!-----//768px-menu----->
+
+	<script>
+	</script>
+<style>
+/* From www.lingdaima.com */
+.card {
+ width: 190px;
+ height: 254px;
+ border-radius: 10px;
+ background: #f1f5f3;
+ box-shadow: 1px 5px 60px 0px #4646466b;
+}
+
+.card .picture,.card .name,.card .jobtitle,.card .buttons {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
+
+.card .picture {
+ border: 2px solid #4646466b;
+ height: 100px;
+ width: 100px;
+ border-radius: 100%;
+ margin: auto;
+ margin-top: 15px;
+ cursor: pointer;
+ transition: all .3s;
+}
+
+.card .picture p {
+ font-size: .8em;
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.buttons > div {
+ padding: .5em;
+}
+
+button {
+ padding: .5em;
+ outline: none;
+ background: transparent;
+ border: 1px solid #0f0f0f6b;
+ border-radius: .4em;
+ font-family: Verdana, Geneva, Tahoma, sans-serif;
+ transition: all .3s;
+ font-size: .7em;
+}
+
+.card .picture:hover,button:hover {
+ background: #252525;
+ color: #f1f5f3;
+}
+
+.card .name p {
+ margin-top: 8%;
+ margin-bottom: 5%;
+ font-size: 1em;
+}
+
+.card .jobtitle p {
+ margin-bottom: 10%;
+ font-size: .54em;
+ text-transform: uppercase;
+ letter-spacing: .5em;
+}
+  .footer{
+        height: 150px;
+        text-align: center;
+        font-size: 16px;
+        padding: 0px 100px;
+        position: absolute;
+        bottom: 0; /* 4. 设置页脚position为absolute之后，再将其bottom值设为0，即可使其处于页面的底部 */
+        width: 100%;
+    }
+    .footer{
+      cursor: pointer;
+    }
+    .copyright{
+      font-size: 12px;
+    }
+    .info{
+      font-size: 14px;
+      color: white;
+      line-height: 25px;
+    }
+    .footer .scroll{
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border:2px solid #eaeaea;
+      /* background-color: rgba(216, 16, 109,0.6); */
+      position: absolute;
+      left: 5%;
+      top: -25px;
+      z-index: 10;
+      animation: scrollA infinite 20s linear alternate;
+    }
+    @keyframes scrollA {
+      0% {left: 5%;transform: rotate(180deg);};
+      10% {left: 5%;transform: rotate(270deg);}
+      20% {left: 5%;transform: rotate(450deg);}
+      25% {left: 10%;transform: rotate(540deg);}
+      30% {left: 20%;transform: rotate(720deg);}
+      35% {left: 30%;transform: rotate(900deg);}
+      40% {left: 40%;transform: rotate(1080deg);}
+      45% {left: 50%;transform: rotate(1260deg);}
+      50% {left: 60%;transform: rotate(1440deg);}
+      55% {left: 70%;transform: rotate(1620deg);}
+      60% {left: 80%;transform: rotate(1800deg);}
+      80% {left: 90%;transform: rotate(2610deg);}
+      90% {left: 90%;transform: rotate(2340deg);}
+      100% {left: 90%;transform: rotate(2520deg);}
+    }
+
+</style>
+</head>
+<body>
+<!-- 导航栏 -->
+    <div class="nav">
+        <a href="/"><img src="../static/image/logo.png" alt=""> </a>
+        <span class="title" style="color:black;">&nbsp;FishRealm</span>
+         <!-- 使用 span 把左右两侧的元素给撑开 -->
+         <span class="spacer"></span>
+         <li><a href="/">首页</a></li>
+         <li><a href="{{url_for('files')}}" >书架</a></li>
+         <li><a href="{{url_for('forum',page=0)}}" >交流</a></li>
+         <li><a href="{{url_for('edit')}}" >编辑</a></li>
+         <li><a href="{{url_for('blog_list')}}" >管理</a></li>
+         {% if post.islogin %}
+         <li class="active"><a href="{{url_for('myweb',user_name=post.id)}}" ><span style="color: crimson;"></span>{{post.id}}</a></li>
+         {% else %}
+         <li><a href="{{url_for('login')}}" ><span style="color: crimson;"></span>登录</a></li>
+         {% endif %}
+    </div>
+
+		<div class="about">
+			 <p class="about-title">My  Website</p>
+				<div class="wrap">
+                            <div class="row-fluid">
+                                <div class="row_side-left">
+									<div class="card">
+										<div class="picture">
+											<a href="{{url_for('PersonalHomePage',username = post.id)}}" target="-blank">
+											<img src="{{post.id|get_avatar_path}}" style="with:100px;height:100px;border-radius: 100%;" alt="Image 1">
+											</a>
+										</div>
+										<a href="{{url_for('chat',friend_id = post.id)}}" target="-blank">
+										<div class="name">
+											<p>{{post.id}}</p>
+										</div>
+										</a>
+										<div class="jobtitle">
+											<p>{{post.privilege}}</p>
+										</div>
+										<div class="buttons">
+											<div class="button1">
+												<button>reset</button>
+											</div>
+											<div class="button2">
+												<form action="/logout" method="POST">
+												<button>logout</button>
+												</form>
+											</div>
+										</div>
+									</div>
+
+								</div>
+
+                                <div class="row_side-right">
+								<h3><span>更换头像</span></h3>
+									<form action="" method="POST" enctype="multipart/form-data">
+										<input type="file" id="avatar" name="avatar" accept=".jpg,.png,.jpeg,.gif,.bmp,.webp,image" />
+										<input type="text" style="visibility: hidden;" name="formid" value="1" />
+            					 		<button class="button">确定</button>
+									</form>
+								<h3><span>背景音乐</span></h3>
+									<form action="" method="POST" enctype="multipart/form-data">
+										<input type="file" id="background" name="background" accept="audio/*,mp3" />
+										<input type="text" style="visibility: hidden;" name="formid" value="2" />
+            					 		<button class="button">确定</button>
+									</form>
+                                </div>
+                                <div class="clear"> </div>
+                            </div>
+
+		                    </div>
+					</div>
+			
+<div class='footer'>
+      <span class="scroll"></span>
+      <!-- <span id="star-five" class="scroll"></span> -->
+      <el-divider></el-divider>
+      <span></span>
+      <el-divider direction="vertical"></el-divider>
+      <span @click="drawer = true"></span>
+      <br/>
+      <br/>
+      	    <a class="banquan" style="color:white;">Copyright @ fishrealm
+	    </a>
+        <img style="display:inline-block;height:auto;max-width:15px;padding-top:2px;" src="../static/image/备案图标.png">
+        <a class="banquan" style=" color:white"
+        href="http://beian.miit.gov.cn/"
+        target="_blank">皖ICP备2023013279号
+	    </a>
+	<div style="width:300px;margin:0 auto; padding:20px 0;">
+		 		<a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=34122202000369" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="../static/image/备案图标.png" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">皖公网安备 34122202000369号</p></a>
+</div>
+						</div>
+
+</body>
+</html>

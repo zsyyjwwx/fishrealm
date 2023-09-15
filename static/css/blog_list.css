@@ -1,0 +1,129 @@
+/* 这个 CSS 专门针对博客列表页来设置样式 */
+
+.blog {
+    width: 100%;
+    padding: 10px 20px;
+}
+
+/* 博客的标题 */
+.blog .title {
+    text-align: center;
+    font-size: 25px;
+    font-weight: 700;
+    padding-top: 10px;
+    padding-bottom: 5px;
+}
+/* 博客的日期 */
+.blog .date {
+    text-align: center;
+    padding-bottom: 10px;
+    color: grey;
+}
+
+/* 博客的描述 */
+.blog .desc {
+    text-indent: 2em;
+}
+
+/* 查看博客详情的按钮 */
+.blog .detail {
+    position:relative;
+    display: block;
+    width: 120px;
+    color: grey;
+    height: 30px;
+    /* 设置边框 */
+    border: 2px solid grey;
+    /* 文字水平居中 */
+    text-align: center;
+    /* 文字垂直居中 */
+    line-height: 30px;
+    /* 去掉下划线 */
+    text-decoration: none;
+    /* 让按钮来到屏幕中间 */
+    margin: 10px auto;
+    /* 加上一个过度效果 */
+    transition: all 1s;
+}
+
+/* 实现鼠标悬停在按钮上时有一个背景色切换的效果 */
+.blog .detail:hover {
+    background-color: grey;
+    color: white;
+}
+.blog .switch {
+ display: inline-block;
+ position: relative;
+
+ right: 0%;
+ /*display: inline-block;*/
+ width: 120px;
+ height: 34px;
+}
+
+.blog .switch input {
+ display: none;
+}
+
+.blog .slider {
+ position: absolute;
+ cursor: pointer;
+ top: 0;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ background-color: 	#DDDDDD;
+ -webkit-transition: .4s;
+ transition: .4s;
+ border-radius: 34px;
+}
+
+.blog .slider:before {
+ position: absolute;
+ content: "";
+ height: 26px;
+ width: 26px;
+ left: 4px;
+ bottom: 4px;
+ background-color: white;
+ -webkit-transition: .4s;
+ transition: .4s;
+ border-radius: 50%;
+}
+
+.blog input:checked + .slider {
+ background-color: #0E6EB8;
+}
+
+.blog input:focus + .slider {
+ box-shadow: 0 0 1px #2196F3;
+}
+
+.blog input:checked + .slider:before {
+ -webkit-transform: translateX(26px);
+ -ms-transform: translateX(26px);
+ transform: translateX(85px);
+}
+
+/*------ ADDED CSS ---------*/
+.blog .slider:after {
+ content: 'private';
+ color: #666666;
+ display: block;
+ position: absolute;
+ transform: translate(-50%,-50%);
+ top: 50%;
+ left: 50%;
+ font-size: 10px;
+ font-family: Verdana, sans-serif;
+}
+
+.blog input:checked + .slider:after {
+ content: 'public';
+ color: #DDDDDD;
+}
+.flex__container  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

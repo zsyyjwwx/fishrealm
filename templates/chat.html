@@ -1,0 +1,253 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>聊天</title>
+        <link rel="stylesheet" type="text/css" href="../static/css/chat.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <link type="text/css" rel="stylesheet" href="../static/css/jquery.mmenu.all.css" />
+	    <link href="../static/layui/css/layui.css" rel="stylesheet"/>
+        <script src="/static/layui/layui.js"></script>
+        <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="../static/script/recorder.mp3.min.js"></script>
+        <script type="text/javascript">
+        add = function ()
+        {
+        var now = new Date();
+        var div = document.getElementById('scrolldIV');
+        div.scrollTop = div.scrollHeight;
+        }
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+        $("#send_message_btn").click(function(){
+            var $message = $('#send_msg');
+            var msg = $message.val();
+            var index = layer.load();
+
+        $.ajax({
+            type: "post",
+            contentType: "application/json",
+            url: "{{url_for('send_message',friend_id = post.friend_id)}}",
+            data:JSON.stringify({'message':msg}),
+            beforeSend: function () {
+                loadIndex = layer.load(1, {
+                    shade: [0.1, '#fff']
+                });
+            },
+            success: function (data) {
+                layer.close(loadIndex);
+                $("#send_msg").val('');
+            },
+            complete: function () {
+                completeUpLoading();
+            },
+            error: function (data) {
+                alert("error");
+            }
+        });
+        });
+});
+</script>
+<script type="text/javascript">
+    get_chat_message = function(){
+        $.get("{{url_for('get_chat_message',friend_id = post.friend_id)}}",
+            function(data,status){
+                var new_chat_list = data['chat_list']
+                if ($("#chatBox_flow").html() == new_chat_list){
+
+                }
+                else{
+                    $("#chatBox_flow").html(data['chat_list']);
+                    add()
+                }
+             });
+    }
+</script>
+<script type="text/javascript">
+    $(function(){
+       get_chat_message()
+        setInterval(function(){
+            get_chat_message()
+        },650);
+    })
+</script>
+<script>
+var voice_state = false;
+function switch_voice_state(){
+    if(voice_state){
+        voice_state = false;
+        var div = document.getElementById('voice_img');
+        div.src = "../static/image/chatimage/语音.png";
+        end_record();
+    }else{
+        voice_state = true;
+        var div = document.getElementById('voice_img');
+        div.src = "../static/image/chatimage/语音ing.png";
+        start_record();
+    }
+}
+
+
+var rec;
+function start_record(){
+    rec=Recorder();//使用默认配置，mp3格式
+    //打开麦克风授权获得相关资源
+    rec.open(function(){
+        //开始录音
+        rec.start();
+    },function(msg,isUserNotAllow){
+        //用户拒绝了权限或浏览器不支持
+        alert((isUserNotAllow?"用户拒绝了权限，":"")+"无法录音:"+msg);
+    });
+};
+</script>
+<script>
+    function uploadRec(){
+        //停止录音，得到了录音文件blob二进制对象，想干嘛就干嘛
+        rec.stop(function(blob,duration){
+
+                var audio=document.createElement("audio");
+                audio.controls=true;
+                document.body.appendChild(audio);
+
+                //非常简单的就能拿到blob音频url
+                audio.src=URL.createObjectURL(blob);
+                audio.play();
+
+            var formData = new FormData()
+            formData.append("upfile",blob,"recorder.mp3");
+            $.ajax({
+                type: 'post',
+                url: "{{url_for('upload_recorder')}}", //上传文件的请求路径必须是绝对路劲
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+            }).success(function (data) {
+                alert("上传成功");
+           }).error(function () {
+                alert("上传失败");
+          });
+
+    },function(msg){
+                alert("录音失败:"+msg);
+    });
+    };
+</script>
+<script>
+        function end_record(){
+            //停止录音，得到了录音文件blob二进制对象，想干嘛就干嘛
+            rec.stop(function(blob,duration){
+                //停止录音，得到了录音文件blob二进制对象，想干嘛就干嘛
+                var audio=document.createElement("audio");
+                audio.controls=false;
+                //audio.hidden = true;
+                document.body.appendChild(audio);
+
+                //非常简单的就能拿到blob音频url
+                audio.src=URL.createObjectURL(blob);
+                audio.play();
+            },function(msg){
+                alert("录音失败:"+msg);
+            });
+        };
+</script>
+
+    </head>
+    <body onload='add();'>
+        <div class="container">
+            <div class="leftSide">
+                <!--header-->
+                <div class="header">
+                    <div class="userimg">
+                        <a href="{{url_for('PersonalHomePage',username = post.id)}}" target="-blank">
+                            <img src="{{post.id|get_avatar_path}}" class="cover" alt="Image 1">
+                        </a>
+                    </div>
+                    <h4>{{post.id}}</h4>
+
+                    <ul class="nav_icons">
+                        <li><img src="../static/image/chatimage/消息.png" style="width:50px;height:50px;"></li>
+                        <li><img src="../static/image/chatimage/更多.png" style="width:50px;height:50px;"></li>
+                    </ul>
+                </div>
+                <!--search-->
+                <div class="search_chat">
+                    <div>
+                        <input type="text" placeholder="搜索...">
+                        <img src="../static/image/chatimage/搜索.png" style="width:25px;height:25px;">
+                    </div>
+                </div>
+                <!--ChatList-->
+
+                <div id="friend_info_list">
+                {% for friend in post.chat_list %}
+                <div class="chatlist" id="chatlist" onclick="window.open('{{url_for('chat',friend_id = friend['username'])}}','_self')">
+                    <div class="block {{friend['state']}}">
+                        <div class="imgbx">
+                        <a href="{{url_for('PersonalHomePage',username = friend['username'])}}" target="-blank">
+                            <img src="{{friend['username']|get_avatar_path}}" class="cover" alt="Image 1">
+                        </a>
+                        </div>
+                        <div class="details">
+                            <div class="listHead">
+                                <h4>{{friend['username']}}</h4>
+                                <p class="time">{{friend['date']}}</p>
+                            </div>
+                            <div class="message_p">
+                                <p>{{friend['recent']}}</p>
+                                {% if friend['unread_count'] %}
+                                 <b>{{friend['unread_count']}}</b>
+                                {% endif %}
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+
+            <div class="rightSide">
+                <div class="header">
+                    <div class="imgText">
+                        <div class="userimg">
+                         <a href="{{url_for('PersonalHomePage',username = post.friend_id)}}" target="-blank">
+                            <img src="{{post.friend_id|get_avatar_path}}" class="cover" alt="Image 1">
+                         </a>
+                        </div>
+                        <h4>{{post.friend_id}}<br><span>{{post.login_state}}</span></h4>
+                    </div>
+                    <ul class="nav_icons">
+                        <li><img src="../static/image/chatimage/消息.png" style="width:50px;height:50px;"></li>
+                        <li><img src="../static/image/chatimage/更多.png" style="width:50px;height:50px;"></li>
+                    </ul>
+                </div>
+                <!--chatbox-->
+                <div style="height:70%;overflow-y:auto;flex-direction:column-reverse;" id = 'scrolldIV' onchange="add()">
+                <div class="chatBox" id = 'chatBox_flow'>
+
+                </div>
+                </div>
+                <!--chat input-->
+            <div class="chatbox_input">
+                <div class="instrument">
+                    <button><img src="../static/image/chatimage/表情.png" style="width:50px;height:50px;"></button>
+                    <button id='voice_button' onclick="switch_voice_state()"><img id='voice_img' src="../static/image/chatimage/语音.png" style="width:50px;height:50px;"></button>
+                </div>
+                <div>
+
+                    <!--<form action="{{url_for('chat',friend_id = post.friend_id)}}" method ='POST'>-->
+                    <textarea name = "massage" id ='send_msg'> </textarea>
+                    <button name = "send" id="send_message_btn">
+                        <img src="../static/image/chatimage/发送.png" style="width:50px;height:50px;">
+                    </button>
+                    <!--</form>-->
+                </div>
+
+            </div>
+            </div>
+
+        </div>
+    </body>
+</html>

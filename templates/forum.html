@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交流</title>
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/css/blog_list.css">
+    <link rel="icon" href="../static/favicon/favicon.ico" type ="image/x-icon">
+    <style>
+        p.ridge {border-style:ridge;}
+     .left {
+        float: left;
+        width: 200px;
+        height: 140px;
+    }
+
+    .right {
+        width:auto;
+        height: auto;
+    }
+    /* 用户信息卡片，也会在多个页面中用到 */
+    .card {
+        background-color:rgba(220,38,38,0);
+        width: 120px;
+        height: 120px;
+    }
+
+    /* 用户头像 */
+    .card img {
+    width: 120px;
+    height: 120px;
+    border-radius: 15%;
+    position:center;
+    }
+
+    /* 用户名 */
+    .card h3 {
+    position: center;
+    padding: 10px 0;
+    }
+    .btn:link,
+    .btn:visited {
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgb(27, 27, 27);
+    padding: 10px 30px;
+    border: 1px solid;
+    border-radius: 1000px;
+    display: inline-block;
+    transition: all .2s;
+    position: relative;
+    }
+
+    .btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(27, 27, 27, .5);
+    }
+
+    .btn:active {
+     transform: translateY(-3px);
+    }
+
+    .btn::after {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    border-radius: 100px;
+    top: 0;
+    left: 0;
+    position: absolute;
+    z-index: -1;
+    transition: all .3s;
+    }
+
+    .btn:hover::after {
+     background-color: rgb(0, 238, 255);
+    transform: scaleX(1.4) scaleY(1.5);
+    opacity: 0;
+    }
+    
+    </style>
+    <script type="text/javascript">
+
+    function sendData(id) {
+        path = '{{url_for('blog_list')}}';
+        parameters = {"text_id":id};
+        method='POST';
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = path;
+        document.body.appendChild(form);
+
+        for (const key in parameters) {
+            const formField = document.createElement('input');
+            formField.type = 'hidden';
+            formField.name = key;
+            formField.value = parameters[key];
+
+            form.appendChild(formField);
+        }
+        form.submit();
+    }
+    </script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="nav">
+        <a href="/"><img src="../static/image/logo.png" alt=""> </a>
+        <span class="title" style="color:black;">FishRealm</span>
+         <!-- 使用 span 把左右两侧的元素给撑开 -->
+         <span class="spacer"></span>
+         <li><a href="/">首页</a></li>
+         <li><a href="{{url_for('files')}}" >书架</a></li>
+         <li class="active"><a href="{{url_for('forum',page=0)}}" >交流</a></li>
+         <li><a href="{{url_for('edit')}}" >编辑</a></li>
+         <li><a href="{{url_for('blog_list')}}">管理</a></li>
+         {% if post.islogin %}
+         <li><a href="{{url_for('myweb',user_name=post.id)}}" ><span style="color: crimson;"></span>{{post.id}}</a></li>
+         {% else %}
+         <li><a href="{{url_for('login')}}" ><span style="color: crimson;"></span>登录</a></li>
+         {% endif %}
+    </div>
+
+    <!-- 版心 -->
+    <div class="container">
+        <!-- 右侧区域，显示博客列表 -->
+        <div class="container-right">
+
+            {% for text in post.texts %}
+          <main>
+          <div class="left">
+            <div class="card" style="">
+                <!-- 用户的头像 -->
+                <a href="{{url_for('PersonalHomePage',username = text.user_id)}}" target="-blank">
+                <img src="{{text.user_id|get_avatar_path}}" alt="">
+                </a>
+                <!-- 用户名 -->
+            </div>
+          </div>
+
+          <div class="right">
+             <div class="blog">
+                <p class="ridge">
+                <div class="title">{{text.title}}</div>
+                <a href={{url_for("chat",friend_id=text.user_id)}} target="-blank">
+                <div class="date">作者:{{text.user_id}}</div>
+                </a>
+                <div class="date">发布时间:{{text.date}}</div>
+                <div class="desc">
+                    {{text.content[0:60]}}
+                </div>
+              <a href={{url_for("blog_detail",text_id=text.text_id)}} class="detail">查看全文</a>
+              </div>
+          </div>
+          </main>
+          {% endfor %}
+          <div>
+            <a href="{{url_for('forum',page = (post.page - 1) if (post.page - 1) >= 0 else 0 )}}" class="btn">上一页</a>
+            <a href="{{url_for('forum',page = post.page + 1)}}" class="btn" style="float:right;">下一页</a>
+         </div>
+           </div>
+         
+      </div>
+      
+</body>
+</html>

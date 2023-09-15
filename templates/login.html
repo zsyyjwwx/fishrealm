@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<title>登录</title>
+<link rel="stylesheet" href="../static/css/login.css">
+
+{% endblock %}
+
+
+{% block body %}
+
+<section class="__layout">
+  <div class="__header">
+      <div class="main">
+            <ul style="display: flex; height: 50px; position: relative; z-index: 99">
+                <li><a href="/">首页</a></li>
+                <li><a href="{{url_for('files')}}" >书架</a></li>
+                <li><a href="{{url_for('forum',page=0)}}" >交流</a></li>
+                <li><a href="{{url_for('edit')}}" >编辑</a></li>
+                <li><a href="{{url_for('blog_list')}}" >管理</a></li>
+                <li class="active"><a href="{{url_for('login')}}" >
+                    <span style="color: crimson;">登录</span>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+  </div>
+
+  <div class="__main">
+      <div class="container">
+          <br><br><br><br>
+          <br><br><br><br>
+        <div class="login_title">
+            <h1 align="top" ><span style="color: crimson;">Log</span>
+                <span style="color: rgb(86, 136, 76);">in to
+                </span>
+                 FishRealm
+            </h1>
+        </div>
+        <br><br>
+        <div class="form">
+            <form action="/login" method="post" >
+            <input type="text" placeholder="您的账号" name="name" id="name" required>
+            <br>
+            <input type="password" placeholder="您的密码" name="pwd" id="pwd" required="required">
+            <br>
+            <button class="btn-login">登录</button>
+            </form>
+        </div>
+          <br><br>
+          <div>
+        <a style="position: relative;z-index: 999;color:white"href="/resetpwd">忘记密码</a>
+              &emsp;&emsp;
+        <a style="position: relative;z-index: 999;color:white"href="/register">注册</a>
+          </div>
+          <br><br>
+          {% if error %}
+          <p style="color:red"><strong>Error</strong>: {{ error }}</p>
+          {% endif %}
+
+    </div>
+    <ul class="bg-squares">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+  </div>
+
+  <div>
+
+  </div>
+</section>
+
+
+<script src="./static/script/login.js"></script>
+{% endblock %}

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理</title>
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/css/blog_list.css">
+    <link rel="icon" href="../static/favicon/favicon.ico" type ="image/x-icon">
+    <style>
+        p.ridge {border-style:ridge;}
+
+
+ .topclick {
+    height: 50px;
+    width: 100px;
+    position:relative;
+    display:inline-block;
+    float: right;
+}
+
+.ltbox1 {
+    padding: 0.8em 1.8em;
+    border: 2px solid #17C3B2;
+    position: relative;
+    overflow: hidden;
+    background-color: transparent;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 16px;
+    transition: .3s;
+    z-index: 1;
+    font-family: inherit;
+    color: #17C3B2;
+    width: 60px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;        /*鼠标指针经过*/
+}
+.ltbox2{
+    width: 60px;
+    height: 80px;
+    margin-top: 2px;
+    border-radius: 10px;
+    background-color: white;
+    position:absolute;
+    display: none;        /*使下拉菜单栏消失*/
+}
+
+.li1{
+    margin-top: 10px;
+}
+.ltbox2 li{
+    height: 30px;
+    width: 60px;
+    text-align: center;
+    line-height: 30px;
+    display: block;        /*使下拉菜单栏显示*/
+}
+.ltbox2 li:hover{
+    background-color:#E8E8E8;
+}
+.ltbox2 li::before {
+ content: '';
+ width: 0;
+ height: 300%;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%) rotate(45deg);
+ background: #17C3B2;
+ transition: .5s ease;
+ display: block;
+ z-index: -1;
+}
+
+.ltbox2 li::before {
+ width: 105%;
+}
+
+.ltbox2 li:hover {
+ color: #111;
+}
+.topclick:hover .ltbox2{
+    display: block;
+}
+    </style>
+    <script type="text/javascript">
+
+    function sendData(id) {
+        path = '{{url_for('blog_list')}}';
+        parameters = {"text_id":id};
+        method='POST';
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = path;
+        document.body.appendChild(form);
+
+        for (const key in parameters) {
+            const formField = document.createElement('input');
+            formField.type = 'hidden';
+            formField.name = key;
+            formField.value = parameters[key];
+
+            form.appendChild(formField);
+        }
+        form.submit();
+    }
+    </script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="nav">
+        <a href="/"><img src="../static/image/logo.png" alt=""> </a>
+        <span class="title" style="color:black;">FishRealm</span>
+         <!-- 使用 span 把左右两侧的元素给撑开 -->
+         <span class="spacer"></span>
+         <li><a href="/">首页</a></li>
+         <li><a href="{{url_for('files')}}" >书架</a></li>
+         <li><a href="{{url_for('forum',page=0)}}" >交流</a></li>
+         <li><a href="{{url_for('edit')}}" >编辑</a></li>
+         <li class="active"><a href="{{url_for('blog_list')}}">管理</a></li>
+         {% if post.islogin %}
+         <li><a href="{{url_for('myweb',user_name=post.id)}}" ><span style="color: crimson;"></span>{{post.id}}</a></li>
+         {% else %}
+         <li><a href="{{url_for('login')}}" ><span style="color: crimson;"></span>登录</a></li>
+         {% endif %}
+    </div>
+    <!-- 版心 -->
+    <div class="container">
+        <!-- 左侧区域，显示用户信息 -->
+        <div class="container-left">
+            <!-- 用户详情 -->
+            <div class="card">
+                <!-- 用户的头像 -->
+                <a href="{{url_for('PersonalHomePage',username = post.id)}}" target="-blank">
+                    <img src="{{post.id|get_avatar_path}}" alt=''>
+                </a>
+                <!-- 用户名 -->
+                <a href="{{url_for('chat',friend_id = post.id)}}" target="-blank">
+                <h3>{{post.id}}</h3>
+                </a>
+                <!-- 其它信息 -->
+                <a href="/">CSDN 地址</a>
+                <a href="/">GitHub 地址</a>
+                <!-- 文章分类 -->
+                <div class="counter">
+                    <span>文章</span>
+                    <span>分类</span>
+                </div>
+                <div class="counter">
+                    <span>{{post.count}}</span>
+                    <span>1</span>
+                </div>
+            </div>
+        </div>
+        <!-- 右侧区域，显示博客列表 -->
+        <div class="container-right">
+
+            {% for text in post.texts %}
+
+            <div class="blog">
+                <p class="ridge">
+                <div class="title">{{text.title}}</div>
+                <div class="date">{{text.date}}</div>
+                <div class="desc">
+                    {{text.content[0:60]}}
+                </div>
+                <div>
+
+                    <a href={{url_for("blog_detail",text_id=text.text_id)}} class="detail">查看全文</a>
+
+                    {% if text.ispublic %}
+                        <label class="switch">
+                            <input type="checkbox" onclick="sendData({{text.text_id}})" checked>
+                            <span class="slider"></span>
+                        </label>
+                    {% else %}
+                    <label class="switch">
+                            <input type="checkbox" onclick="sendData({{text.text_id}})">
+                            <span class="slider"></span>
+                    </label>
+                    {% endif %}
+                    <span></span>
+                    <div class="topclick">
+                        <div class="ltbox1">
+                            <p>...</p>
+                        </div>
+                        <ul class="ltbox2">
+                            <li class="li1"><a href="{{url_for('revise',text_id = text.text_id)}}" >revise</a></li>
+                            <li><a href="{{url_for('delete',text_id = text.text_id)}}" >delete</a></li>
+
+                        </ul>
+                    </div>
+
+
+                </div>
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+     <embed src="{{post.id|get_background_path}}" style="visibility: hidden;" width=170 height=25 loop="true" autostart="true">
+</body>
+</html>

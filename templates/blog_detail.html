@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{post.text.title}}</title>
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/css/blog_detail.css">
+
+    <!-- 引入依赖 -->
+    <link rel="stylesheet" href="../static/editor/css/editormd.min.css">
+    <!-- editormd JS相关文件 -->
+    <script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../static/editor/lib/marked.min.js"></script>
+    <script src="../static/editor/lib/prettify.min.js"></script>
+    <script src="../static/editor/editormd.js"></script>
+	<script src="../static/editor/lib/raphael.min.js"></script>
+    <script src="../static/editor/lib/underscore.min.js"></script>
+    <script src="../static/editor/lib/sequence-diagram.min.js"></script>
+    <script src="../static/editor/lib/flowchart.min.js"></script>
+    <script src="../static/editor/lib/jquery.flowchart.min.js"></script>
+    <link rel="icon" href="../static/favicon/favicon.ico" type ="image/x-icon">
+    <script type="text/javascript">
+    $(function() {
+        var editor = editormd.markdownToHTML("test-editor", {
+            //width  : "100%",
+            height : 1000,
+            path   : "../static/editor/lib/",
+            readOnly : true,
+            watch:false,
+            codeFold: true,
+            autoHeight : true,
+			saveHTMLToTextarea: true,
+			searchReplace: true,
+			htmlDecode: "style,script,iframe|on*",
+            tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+            emoji: true,
+            flowChart : true,             // 开启流程图支持，默认关闭
+            sequenceDiagram : true       // 开启时序/序列图支持，默认关闭
+        });
+    });
+    </script>
+
+</head>
+<body>
+
+        <!-- 导航栏 -->
+    <div class="nav">
+        <a href="/"><img src="../static/image/logo.png" alt=""> </a>
+        <span class="title" style="color:black;">FishRealm</span>
+         <!-- 使用 span 把左右两侧的元素给撑开 -->
+         <span class="spacer"></span>
+         <li><a href="/">首页</a></li>
+         <li><a href="{{url_for('files')}}" >书架</a></li>
+         <li><a href="{{url_for('forum',page=0)}}" >交流</a></li>
+         <li><a href="{{url_for('edit')}}" >编辑</a></li>
+         <li><a href="{{url_for('blog_list')}}">管理</a></li>
+         {% if post.islogin %}
+         <li><a href="{{url_for('myweb',user_name=post.id)}}" ><span style="color: crimson;"></span>{{post.id}}</a></li>
+         {% else %}
+         <li><a href="{{url_for('login')}}" ><span style="color: crimson;"></span>登录</a></li>
+         {% endif %}
+    </div>
+    <!-- 版心 -->
+    <div class="container">
+        <!-- 左侧区域，显示用户信息 -->
+        <div class="container-left">
+            <!-- 用户详情 -->
+            <div class="card">
+                <!-- 用户的头像 -->
+                <a href="{{url_for('PersonalHomePage',username = post.text.user_id)}}" target="-blank">
+                <img src="{{post.text.user_id|get_avatar_path}}" alt="">
+                </a>
+                <!-- 用户名 -->
+                <a href="{{url_for('chat',friend_id = post.text.user_id)}}" target="-blank">
+                <h3>{{post.text.user_id}}</h3>
+                </a>
+                <!-- 其它信息 -->
+                <a href="/">CSDN 地址</a>
+                <a href="#">GitHub 地址</a>
+                <!-- 文章分类 -->
+                <div class="counter">
+                    <span>文章</span>
+                    <span>分类</span>
+                </div>
+                <div class="counter">
+                    <span>{{post.count}}</span>
+                    <span>1</span>
+                </div>
+            </div>
+        </div>
+        <!-- 右侧区域，显示博客列表 -->
+        <div class="container-right">
+            <!-- 使用这个 div 来放博客内容 -->
+            <div class="blog-content">
+                <!-- 博客的标题 -->
+                <h3>{{post.text.title}}</h3>
+                <!-- 博客的日期 -->
+                <div class="date">{{post.text.date}}</div>
+                <!-- 博客的内容 -->
+                <div id="test-editor">
+                <textarea name="content" id="content"  style="display:none;">{{post.text.content}}</textarea>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <embed src="{{post.text.user_id|get_background_path}}" style="visibility: hidden;" width=170 height=25 loop="true" autostart="true">
+</body>
+</html>
